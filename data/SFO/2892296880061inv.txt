@@ -1,0 +1,5 @@
+724940 23234 SAN FRANCISCO INTL             2012 1018  897 1006  939  953  914  960  959  932 1012  965 1028
+
+
+Total Surface Hourly Observations Available: 11583
+Total Station-Years: 1

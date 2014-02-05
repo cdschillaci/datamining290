@@ -1,0 +1,3 @@
+USAF-WBAN_ID STATION NAME                   COUNTRY                                            STATE 			      LATITUDE LONGITUDE ELEVATION
+------------ ------------------------------ -------------------------------------------------- ------------------------------ -------- --------- ---------
+724940 23234 SAN FRANCISCO INTL             UNITED STATES                                      CALIFORNIA                      +37.620  -122.365   +0005.5
