@@ -1,0 +1,27 @@
+Motivation: San Francisco Bay represents one of the worlds most reliable sailing venues during the summer. A thermally driven pressure differential between the cold Pacific and warm Central Valley, further enhanced by a Venturi effect through the Golden Gate, drives winds which reliably reach 15-25 nautical miles per hour (kts) during the "summer." Those who race in sailboats are especially interested in this information, as minimizing the weight of carried equipment is important and different wind strengths require different personal gear choices and sail selection. Weather forecast models tend to lack the level of detail necessary to capture the localized nature of this wind flow. Sailors have therefore developed rules of thumb for estimating the wind speed on a given day, for example "Take the temperature difference between Sacramento and San Francisco to get the max wind in knots." An interesting machine learning/data science driven question would be to estimate the maximum wind speed, time of maximum, etc. based only on recent weather station data available before the sailor leaves home in the morning before a race. Because the summer wind flow provides such a reliable pattern and a vast amount of observational data is available, this should be a tractable machine learning problem.
+
+I have gathered some basic weather data from the SF Bay area. Many data sources are available from NOAA's National Climatic Data Center, but the datasets are very fragmented. Successful analysis of weather data will certainly involve a lot of data collection, cleaning, and merging. Challenges include:
+1. Many data sources in many different formats
+2. Data available at different intervals
+3. Available observations change over time (can be mitigated by minimizing the date range)
+4. Malfunctioning equipment may lead to erroneous or non-existent readings. Some datasets have been cleaned already to minimize the former.
+
+I downloaded two samples. The first is hourly surface data from NNDC Climate Data online for SF International Airport. 
+This is downloadable for seven days from http://www1.ncdc.noaa.gov/pub/orders/CDO2892296880061.html
+New searches of this type can be initiated at http://cdo.ncdc.noaa.gov/pls/plclimprod/poemain.accessrouter?datasetabbv=DS3505
+The 2012 data includes 11583 records. Data is available for all years since 1933.
+
+Another data sample is obtained for the floating buoy FTPC1, located off Crissy Field. This data is downloaded from 
+http://www.ndbc.noaa.gov/station_page.php?station=ftpc1
+
+From here, an interesting record is
+
+#YY	MM	DD	hh	mm	WDIR	WSPD 	GST	WVHT	DPD	APD	MWD	PRES	ATMP	WTMP	DEWP	VIS	TIDE#yr	mo	dy	hr	mn	degT	m/s	m/s	m	sec	sec	degT   	hPa	degC	degC	degC	mi	ft
+2012	1	7	21	0	1	6.2	7.8	99	99	99	999	1021.8	16.8	11	999	99	992012	1	7	21	6	3	6.2	7.2	99	99	99	999	1021.6	16.6	11	999	99	992012	1	7	21	12	4	6.7	7.9	99	99	99	999	1021.5	17	11	999	99	992012	1	7	21	18	9	5.7	7.4	99	99	99	999	1021.3	16.7	11.1	999	99	992012	1	7	21	24	5	6.4	8.9	99	99	99	999	1021.2	17	11.1	999	99	992012	1	7	21	30	5	6.4	8.9	99	99	99	999	1021.2	17	11.1	999	99	992012	1	7	21	36	8	5.6	7.5	99	99	99	999	1021	16.7	11.1	999	99	992012	1	7	21	42	8	5.6	7.5	99	99	99	999	1021	16.7	11.1	999	99	992012	1	7	21	48	4	7.9	25.1	99	99	99	999	1020.9	17.3	11.1	999	99	992012	1	7	21	54	7	6.4	7.3	99	99	99	999	1020.9	16.9	11.1	999	99	99
+
+
+Several things to note.
+1. Readings of all 9's seem to indicate no reading available. I am not sure if this data set has been cleaned, so that these replace unreasonable readings.
+2. The windiest gust in January, 2012 is at 21:48 in this set. It's not clear whether this is a reasonable reading, as it is very much an outlier in the nearby records.
+3. Atmospheric temperature is oscillating, this seems to reflect a lack of precision as the oscillations seem excessive on this time scale.
+4. This is in the winter, and so does not exhibit the standard summer pattern with a peak wind flowing from the GG Bridge around 3pm.
