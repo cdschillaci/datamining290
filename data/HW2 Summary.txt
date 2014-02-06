@@ -3,7 +3,7 @@ Motivation: San Francisco Bay represents one of the worlds most reliable sailing
 1. In the marginal "spring" and "fall" months, can the establishment of a thermal westerly be predicted? This might be hard to define. 
 2. Can we see additional patterns in the data, such as dependable timing of additional wind speed maxima or wind direction oscillation frequencies?
 
-I have gathered some basic weather data from the SF Bay area. Many data sources are available from NOAA's National Climatic Data Center, but the datasets are very fragmented. Successful analysis of weather data will certainly involve a lot of data collection, cleaning, and merging. Challenges include:
+I have gathered some basic weather data from the SF Bay area. Many data sources are available from NOAA's National Climatic Data Center, but the datasets are very fragmented. Successful analysis of weather data will certainly involve extensive data collection, cleaning, and integration. Challenges include:
 1. Many data sources in many different formats
 2. Data available at different intervals
 3. Available observations change over time (can be mitigated by minimizing the date range)
