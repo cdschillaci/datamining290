@@ -15,13 +15,11 @@ candidateID_col = 16 #17-1
 # and provides some interfaces to return this info in various ways
 class Candidate:
     'This class stores a candidates records and some statistical info about them'
-    nCandidates=0
     csvHeader=['Candidate ID']+['Total Contributions']+['Z Value of Total']+['Minimum Contribution']\
         +['Maximum Contribution']+['Median Contribution']+['Mean Contribution']+['Stdev of Contributions']
     
     def __init__(self, candidateID):
         self.ID=candidateID
-        Candidate.nCandidates+=1
         self.transactionAmounts=[]
         self.nTransactions=0
         
@@ -68,7 +66,7 @@ class Candidate:
         return [self.ID,"%.2f"%self.total,"%.4f"%self.zTotal,"%.2f"%self.minTransaction,"%.2f"%self.maxTransaction,"%.2f"%self.medianTransaction,"%.2f"%self.meanTransaction,"%.2f"%(self.transactionVariance**0.5)]
         
 
-# This is the code which does the work        
+# This is the code which does the work for individual candidates     
 candidateDict={}
 candidateList=[]
 for row in csv.reader(fileinput.input(), delimiter='|'):
@@ -77,29 +75,29 @@ for row in csv.reader(fileinput.input(), delimiter='|'):
     tempTransAmount = row[transactionAmount_col]
     
     if tempID not in candidateDict:
-        candidateDict[tempID]=Candidate.nCandidates
+        candidateDict[tempID]=len(candidateDict)
         candidateList.append(Candidate(tempID))
         
     candidateList[candidateDict[tempID]].addTransaction(tempTransAmount)
 
-print "There are a total of %d candidates.\n" %Candidate.nCandidates        
+print "There are a total of %d candidates.\n" %len(candidateDict)        
         
       
         
 # This loops over all candidates and computes statistics for each, as well as the mean of the 
 # total transactions for the candidates
 mean=0
-for i in range (0,Candidate.nCandidates):
+for i in range (0,len(candidateList)):
     candidateList[i].calcStats()
     mean+=candidateList[i].total
     
-mean/=Candidate.nCandidates
+mean/=len(candidateDict) 
  
 # Compute variance of the candidates' total contributions   
 variance=0
-for i in range (0,Candidate.nCandidates):
+for i in range (0,len(candidateList)):
     variance+=(candidateList[i].total-mean)**2
-variance/=Candidate.nCandidates
+variance/=len(candidateDict)
 
 #These lines can be used to print info for one candidate to the terminal
 candidateList[1].printStats()
@@ -114,6 +112,6 @@ with open('byCandidate.csv', 'wb') as csvfile:
     writer.writerow(Candidate.csvHeader)
    
     #Write data for each candidate
-    for i in range (0,Candidate.nCandidates):  
+    for i in range (0,len(candidateList)):  
         writer.writerow(candidateList[i].csvRow(mean,variance))
       
