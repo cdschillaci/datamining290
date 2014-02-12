@@ -69,37 +69,44 @@ class Candidate:
 # This is the code which does the work for individual candidates     
 candidateDict={}
 candidateList=[]
+noID=Candidate('') # Here go all transactions with no candidate ID
 for row in csv.reader(fileinput.input(), delimiter='|'):
 
     tempID = row[candidateID_col]
     tempTransAmount = row[transactionAmount_col]
     
+    # Some transactions have no candidate ID
+    if tempID=="":
+        noID.addTransaction(tempTransAmount)
+        continue
+        
     if tempID not in candidateDict:
         candidateDict[tempID]=len(candidateDict)
         candidateList.append(Candidate(tempID))
         
     candidateList[candidateDict[tempID]].addTransaction(tempTransAmount)
 
-print "There are a total of %d candidates.\n" %len(candidateDict)        
+print "There are a total of %d candidates." %len(candidateDict) 
+print "The data contains %d transactions with no candidateID.\n" %noID.nTransactions    
         
-      
-        
+          
 # This loops over all candidates and computes statistics for each, as well as the mean of the 
 # total transactions for the candidates
 mean=0
-for i in range (0,len(candidateList)):
-    candidateList[i].calcStats()
-    mean+=candidateList[i].total
+for cand in candidateDict:
+    candidateList[candidateDict[cand]].calcStats()
+    mean+=candidateList[candidateDict[cand]].total
     
 mean/=len(candidateDict) 
  
 # Compute variance of the candidates' total contributions   
 variance=0
-for i in range (0,len(candidateList)):
-    variance+=(candidateList[i].total-mean)**2
+for cand in candidateDict:  
+    variance+=(candidateList[candidateDict[cand]].total-mean)**2
 variance/=len(candidateDict)
 
 #These lines can be used to print info for one candidate to the terminal
+print "Statistics for a sample candidate:\n"
 candidateList[1].printStats()
 candidateList[1].printTotal_Znorm(mean,variance)
 
@@ -112,6 +119,6 @@ with open('byCandidate.csv', 'wb') as csvfile:
     writer.writerow(Candidate.csvHeader)
    
     #Write data for each candidate
-    for i in range (0,len(candidateList)):  
-        writer.writerow(candidateList[i].csvRow(mean,variance))
+    for cand in candidateDict:  
+        writer.writerow(candidateList[candidateDict[cand]].csvRow(mean,variance))
       
