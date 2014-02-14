@@ -7,42 +7,58 @@ http://www.fec.gov/finance/disclosure/metadata/DataDictionaryContributionstoCand
 import fileinput
 import csv
 
-total = 0.0
+# Column numbers in data file for various info. Subtract one to convert to python indexing
+transactionAmount_col = 14 #15-1
+candidateID_col = 16 #17-1
 
+# This class describes a candidate
+class Candidate:
+    'This class stores a candidates records and some statistical info about them'
+    nCandidates=0
+    
+    def _init_(self, candidateID):
+        self.ID=candidateID
+        Candidate.nCandidates+=1
+        self.transactionAmounts=[]
+        self.nTransactions=0
+        
+    def addTransaction(self, transactionAmount):
+        self.transactionAmounts.append(transactionAmount)
+        self.nTransactions+=1
+
+    def calcStats(self):
+        self.transactionAmounts.sort() #for median
+        self.total = sum(self.transactionAmounts)
+        self.maxTransaction = max(self.transactionAmounts)
+        self.minTransaction = min(self.transactionAmounts)
+        self.meanTransaction = self.total / self.nTransactions
+        self.medianTransaction = self.transactionAmounts[int(self.nTransactions//2)]
+
+        # Calculate the variance
+        self.transactionVariance = 0
+        for value in self.transactionAmounts:
+            self.transactionVariance += (value-self.meanTransaction)**2
+        self.transactionVariance /= self.nTransactions
+        
+    def printStats(self):
+        print "Total contributions: %.2f" % self.total
+        print "Minimum: %.2f" % self.minTransaction
+        print "Maximum: %.2f" % self.maxTransaction
+        print "Mean: %.2f" % self.meanTransaction
+        print "Median: %.2f" % self.medianTransaction
+        print "Standard Deviation: %.2f" % self.transactionVariance**0.5
+
+# This is the code which does the work        
+candidateDict={}
+candidateList=[]
 for row in csv.reader(fileinput.input(), delimiter='|'):
-    if not fileinput.isfirstline():
-        total += float(row[14])
-        ###
-        # TODO: calculate other statistics here
-        # You may need to store numbers in an array to access them together
-        ##/
 
-###
-# TODO: aggregate any stored numbers here
-#
-##/
-
-##### Print out the stats
-print "Total: %s" % total
-print "Minimum: "
-print "Maximum: "
-print "Mean: "
-print "Median: "
-# square root can be calculated with N**0.5
-print "Standard Deviation: "
-
-##### Comma separated list of unique candidate ID numbers
-print "Candidates: "
-
-def minmax_normalize(value):
-    """Takes a donation amount and returns a normalized value between 0-1. The
-    normilzation should use the min and max amounts from the full dataset"""
-    ###
-    # TODO: replace line below with the actual calculations
-    norm = value
-    ###/
-
-    return norm
-
-##### Normalize some sample values
-print "Min-max normalized values: %r" % map(minmax_normalize, [2500, 50, 250, 35, 8, 100, 19])
+    tempID = row[candidateID_col]
+    tempTransAmount = row[transactionAmount_col]
+    
+    if tempID not in candidateDict:
+        candidateDict[tempID]=Candidate.nCandidates
+        candidateList.append(Candidate(tempID))
+    else:
+        candidateList[candidateDict[tempID]].addTransaction(tempTransAmount)
+        
