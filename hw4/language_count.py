@@ -9,14 +9,17 @@ WORD_RE = re.compile(r"[\w']+")
 
 
 class ReviewLanguageCount(MRJob):
+    """Counts the number of reviews in each language German, Spanish, English, French. Some reviews
+       are ambiguous and these are assigned to 'Unknown'"""
     INPUT_PROTOCOL = JSONValueProtocol
     
     def init_check_language(self):
-        self.lang=getLanguage(500,2); 
+        """This initializes the language identification object on each node"""
+        self.lang=getLanguage(500,2); # getLanguage(nWords, confidence)
         
     def check_language(self, _, record):
         """Extract words using a regular expression.  Normalize the text to
-        ignore capitalization."""
+        ignore capitalization. Yield <language,1> for each word"""
         if record['type'] == 'review':
             yield [self.lang.language(record['text']), 1]
 

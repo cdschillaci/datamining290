@@ -1,6 +1,6 @@
 import re
 
-from django.utils.encoding import smart_str
+#from django.utils.encoding import smart_str # This is needed to print unicode strings for debugging
 
 class getLanguage: 
     """This class provides rough functionality to determine what language a text 
@@ -16,7 +16,8 @@ class getLanguage:
         self.confidence=confidence        
 
         top_eng_words=[]
-        # This ordered list of mot frequent English words is from Google
+        # This ordered list of most frequent English words is from Google
+        # https://github.com/first20hours/google-10000-english/blob/master/google-10000-english.txt       
         with open('/Users/cdschillaci/Documents/School/Spring 2014/Info290T-03/datamining290/hw4/frequentDicts/google-10000-english.txt') as inputFile:
             for line in inputFile.readlines():        
                 for word in getLanguage.WORD_RE.findall(line):        
@@ -57,7 +58,7 @@ class getLanguage:
         self.top_fren_word_set=set(top_fren_words)-set(top_germ_words)-set(top_eng_words)-set(top_span_words)                
         self.top_span_word_set=set(top_span_words)-set(top_fren_words)-set(top_eng_words)-set(top_germ_words)
     
-        # These are some really popular words in Yelp reviews, 
+        # These are some really popular words in Yelp reviews, improves classification, especially of short reviews
         self.top_eng_word_set=self.top_eng_word_set|set(['fast','good','great','best','awesome','fantastic','delicious','excellent','yum','yummy','amazing','disgusting','closed'])
 
     def printTopEng(self):
@@ -85,14 +86,13 @@ class getLanguage:
         """Extract words using a regular expression.  Normalize the text to
         ignore capitalization."""            
         
-        # https://github.com/first20hours/google-10000-english/blob/master/google-10000-english.txt
-        #Dont use in as its also a common english word, or single letter words
-        
+        # Initialize word counts to zero
         top_eng_count=0
         top_germ_count=0
         top_fren_count=0
         top_span_count=0    
-    
+        
+        # Loop overtext and increment counters when a word appers in a language's dictionary
         for word in getLanguage.WORD_RE.findall(string):
             if word.lower() in self.top_eng_word_set:
                 top_eng_count+=1
@@ -107,6 +107,8 @@ class getLanguage:
             #if abs(top_eng_count-top_germ_count) > 10*min([top_eng_count,top_germ_count]):
                 # break
         
+        # Return the language with the at least confidence times as many words as any other language
+        # If none satisfy this condition, return 'Unknown'
         if top_germ_count>self.confidence*top_eng_count \
             and top_germ_count>self.confidence*top_span_count and top_germ_count>self.confidence*top_fren_count:
             return('German')
