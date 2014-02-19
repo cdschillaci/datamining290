@@ -2,18 +2,16 @@ from mrjob.job import MRJob
 from mrjob.protocol import JSONValueProtocol
 
 import re
-
-from language import *
-
+# Define a regex which splits the review into words
 WORD_RE = re.compile(r"[\w']+")
 
+from language import getLanguage
 
-# One issue here is that at least some reviews are in German. There are a few ways I can think of to
-# discriminate between English/German in a crude way:
-# relative letter frequency: The frequency of the letter 'e' is 12.7% in Eng 
-# and 17.4% in German FROM WIKIPEDIA
-# Common words: The five most common words in English are 'the' 'be' 'to' 'of' 'and' FROM WIKIPEDIA
-# The five most common words in written German are 'der' 'die' 'und' 'in' 'von' SOURCE: http://german.about.com/library/blwfreq_spk30.htm
+# This is the list of languages which will be included in the unique review search.
+# Options are 'English', 'Spanish', 'German', 'French', and 'Unknown'
+# 'Unknown' is assigned to reviews which cannot be clearly categorized, these are generally
+# short and occasionally written in multiple languages
+included_langs=['English']
 
 class UniqueReview(MRJob):
     INPUT_PROTOCOL = JSONValueProtocol
@@ -23,7 +21,8 @@ class UniqueReview(MRJob):
 
     def extract_words(self, _, record):
         """Take in a record, yield <word, review_id>"""
-        if record['type'] == 'review' and (self.lang.language(record['text']) in ['English']):
+        
+        if record['type'] == 'review' and (self.lang.language(record['text']) in included_langs):
             for word in WORD_RE.findall(record['text']):
                 # Key is a word in all lower case, value is the review ID
                 yield(word.lower(), record['review_id'])
@@ -52,13 +51,7 @@ class UniqueReview(MRJob):
         the maximum count, and output the result."""
         temp=max(count_review_ids)
         yield(temp[1],temp[0])
-        ###
-        # TODO: find the review with the highest count, yield the review_id and
-        # the count. HINT: the max() function will compare pairs by the first
-        # number
-        #
-        #/
-
+ 
     def steps(self):
         """TODO: Document what you expect each mapper and reducer to produce:
         mapper1: <line, record> => <key, value>
