@@ -9,8 +9,7 @@ class user:
     def __init__ (self,user_id, bus_ids):
         self.user_id=user_id
         self.bus_ids=bus_ids
-        self.bus_ids_set=set(bus_ids)
-
+        self.bus_ids_set=set(bus_ids) # This is an unecessary communication expense, but convenient here
 
 class UserSimilarity(MRJob):
     INPUT_PROTOCOL = JSONValueProtocol
