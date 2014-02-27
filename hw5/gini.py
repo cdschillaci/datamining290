@@ -64,7 +64,7 @@ total=float(0)
 for code in zip_dicts:
     total+=sum(zip_dicts[code].values())
 
-# Use an unreadabe nested for/sum stateent to calculate split gini
+# Use an unreadabe nested for/sum statement to calculate split gini
 split_gini = sum( (1-sum((zip_dicts[code][cand]/float(sum(zip_dicts[code].values())))**2 for cand in zip_dicts[code]))*sum(zip_dicts[code].values())/total for code in zip_dicts)  # weighted average of the Gini Indexes using candidate names, split up by zip code
 
 
