@@ -8,6 +8,8 @@ import csv
 import collections as coll
 import numpy as np
 
+jump=15
+
 
 (
     CMTE_ID, AMNDT_IND, RPT_TP, TRANSACTION_PGI, IMAGE_NUM, TRANSACTION_TP,
@@ -21,8 +23,8 @@ CANDIDATES = {
     'P80003353': 'Romney',
 }
 
-list_thing=[]
-list_thing2=[]
+transactions=[] # Pairs [transaction_amt, candidate_name]
+trans_amts=[] # List of transaction amounts
 
 
 ############### Read through files
@@ -33,30 +35,61 @@ for row in csv.reader(fileinput.input('itpas2.txt'), delimiter='|'):
 
     candidate_name = CANDIDATES[candidate_id]
     
-    list_thing.append([float(row[TRANSACTION_AMT]),candidate_name])
-    list_thing2.append(float(row[TRANSACTION_AMT]))
+    transactions.append([float(row[TRANSACTION_AMT]),candidate_name])
+    trans_amts.append(float(row[TRANSACTION_AMT]))
   
-temp=list_thing2
-#list_thing.sort()
-total=float(len(list_thing2))
+#Total number of transactions
+total=float(len(trans_amts))
 
-list_thing2=list(set(list_thing2))
-list_thing2.sort()
+# Sort and unique trans_amts
+trans_amts=list(set(trans_amts))
+trans_amts.sort()
 
-best_split=[list_thing2[0]-1,1]
+best_split=[trans_amts[0]-1,trans_amts[0]-1,1]
 
-
-for split in [np.median(temp)]:# list_thing2:
-    dict_pair=[coll.defaultdict(int),coll.defaultdict(int)]
-    for transaction in list_thing:
-        if transaction[0]<=split:
-            dict_pair[0][transaction[1]]+=1
-        else:
-            dict_pair[1][transaction[1]]+=1
+# Search over the possible transaction amounts, in intervals of jump values
+for split1 in trans_amts[::jump]:
+    print "Currently working on split1= "+str(split1)
+    for split2 in trans_amts[::jump]:
+        if split2<=split1:
+            continue
+        # 
+        dict_set=[coll.defaultdict(int),coll.defaultdict(int),coll.defaultdict(int)]
+        for transaction in transactions:
+            if transaction[0]<=split1:
+                dict_set[0][transaction[1]]+=1
+            elif transaction[0]<=split2:
+                dict_set[1][transaction[1]]+=1
+            else:
+                dict_set[2][transaction[1]]+=1
+                
+        split_gini=sum( (1-sum((temp[cand]/float(sum(temp.values())))**2 for cand in temp))*sum(temp.values())/total for temp in dict_set)  # weighted average of the Gini Indexes using candidate names, split up by zip code
+        if split_gini<best_split[2]:
+            best_split=[split1,split2,split_gini]
+            print best_split
             
-    split_gini=sum( (1-sum((temp[cand]/float(sum(temp.values())))**2 for cand in temp))*sum(temp.values())/total for temp in dict_pair)  # weighted average of the Gini Indexes using candidate names, split up by zip code
-    if split_gini<best_split[1]:
-        best_split=[split,split_gini]
-        print best_split
-        
+            
+# Now search over all values near the coarse-grained best
+split1Index=trans_amts.index(best_split[0])      
+split2Index=trans_amts.index(best_split[0])            
+            
+for split1 in trans_amts[split1Index-jump:split1Index+jump]:
+    print "Currently working on split1= "+str(split1)
+    for split2 in trans_amts:
+        if split2<=split1:
+            continue
+        dict_set=[coll.defaultdict(int),coll.defaultdict(int),coll.defaultdict(int)]
+        for transaction in transactions:
+            if transaction[0]<=split1:
+                dict_set[0][transaction[1]]+=1
+            elif transaction[0]<=split2:
+                dict_set[1][transaction[1]]+=1
+            else:
+                dict_set[2][transaction[1]]+=1
+                
+        split_gini=sum( (1-sum((temp[cand]/float(sum(temp.values())))**2 for cand in temp))*sum(temp.values())/total for temp in dict_set)  # weighted average of the Gini Indexes using candidate names, split up by zip code
+        if split_gini<best_split[2]:
+            best_split=[split1,split2,split_gini]
+            print best_split
+            
 print best_split
