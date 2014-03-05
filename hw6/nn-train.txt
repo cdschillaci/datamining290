@@ -1,17 +1,18 @@
 err_6 = -0.11346127339699999
 err_5 = -0.0011326458827956695
-err_4 =
-err_3 =
+err_4 = -0.0014027
+err_3 = -0.00446116
 
 w_56 = 0.37298917134759924
-w_46 =
-w_36 =
+w_46 = 0.679594
+w_36 = -0.629393
 
-err_2 =
-err_1 =
-w_25 =
-w_24 =
-w_23 =
-w_15 =
-w_14 =
-w_13 =
+err_2 = 0.0105598 <-- The errors of the input layers don't really make sense! Why are we calculating this? How should it be defined?
+err_1 = 0
+
+w_25 = 0.454746
+w_24 = -3.02805
+w_23 = 1.91078
+w_15 = 3.98869
+w_14 = 1.98597
+w_13 = -3.04461
