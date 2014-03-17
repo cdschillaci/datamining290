@@ -1,4 +1,6 @@
 import re
+import os.path
+import sys
 
 #from django.utils.encoding import smart_str # This is needed to print unicode strings for debugging
 
@@ -18,21 +20,21 @@ class getLanguage:
         top_eng_words=[]
         # This ordered list of most frequent English words is from Google
         # https://github.com/first20hours/google-10000-english/blob/master/google-10000-english.txt       
-        with open('/Users/cdschillaci/Documents/School/Spring 2014/Info290T-03/datamining290/hw4/frequentDicts/google-10000-english.txt') as inputFile:
+        with open(os.path.join(sys.path[0],'frequentDicts/google-10000-english.txt') ) as inputFile:
             for line in inputFile.readlines():        
                 for word in getLanguage.WORD_RE.findall(line):        
                     top_eng_words.append(word.lower())    
 
         # http://wortschatz.uni-leipzig.de/html/wliste.html
         top_germ_words=[] 
-        with open('/Users/cdschillaci/Documents/School/Spring 2014/Info290T-03/datamining290/hw4/frequentDicts/top10000de.txt') as inputFile:
+        with open(os.path.join(sys.path[0],'frequentDicts/top10000de.txt')) as inputFile:
             for line in inputFile.readlines():        
                 for word in getLanguage.WORD_RE.findall(line):        
                     top_germ_words.append(word.lower())   
                     
         # http://wortschatz.uni-leipzig.de/html/wliste.html
         top_fren_words=[] 
-        with open('/Users/cdschillaci/Documents/School/Spring 2014/Info290T-03/datamining290/hw4/frequentDicts/top10000fr.txt') as inputFile:
+        with open(os.path.join(sys.path[0],'frequentDicts/top10000fr.txt')) as inputFile:
             for line in inputFile.readlines():        
                 for word in getLanguage.WORD_RE.findall(line):        
                     top_fren_words.append(word.lower())   
@@ -40,7 +42,7 @@ class getLanguage:
         # http://yong321.freeshell.org/misc/WordFrequency.html
         # Slightly different format here
         top_span_words=[] 
-        with open('/Users/cdschillaci/Documents/School/Spring 2014/Info290T-03/datamining290/hw4/frequentDicts/SpanishWordFrequencyG.txt') as inputFile:
+        with open(os.path.join(sys.path[0],'frequentDicts/SpanishWordFrequencyG.txt')) as inputFile:
             for line in inputFile.readlines():        
                top_span_words.append( getLanguage.WORD_RE.findall(line)[0] )       
         #consider using http://corpus.rae.es/lfrecuencias.html instead if this doesnt work
