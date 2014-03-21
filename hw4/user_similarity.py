@@ -8,7 +8,7 @@ class user:
        set version bus_ids_set"""
     def __init__ (self,user_id, bus_ids):
         self.user_id=user_id
-        self.bus_ids=bus_ids
+        #self.bus_ids=bus_ids
         self.bus_ids_set=set(bus_ids) # This is an unecessary communication expense, but convenient here
 
 class UserSimilarity(MRJob):
@@ -22,7 +22,7 @@ class UserSimilarity(MRJob):
             yield [record['user_id'],record['business_id']]
                                 
     def reduce_users(self, user_id, business_ids):
-        """ Take in <user_id, business_id> and yield <CONSTANT,user object> for each user that has more han one review"""
+        """ Take in <user_id, business_id> and yield <CONSTANT,user object> for each user that has more than one review"""
         temp=user(user_id,list(business_ids))
         if len(temp.bus_ids_set)>1:
             yield("ALL",temp)
