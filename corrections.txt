@@ -1,0 +1,3 @@
+#3 I incorrectly labelled these for no good reason. Continuous, differentiable unimodal distributions always have the median between the mean and the mode.
+
+#7.4 Pivoting basically rotates a multi cube of data so that we are looking at a different face and summarizing along a different dimension. We could start from a view with rows of different ad types, columns of different quarters, and values of the total number of ads summed over different ad sizes. Then pivot to viewing ad types as columns, ad sizes as rows, and sum over different quarters as values.
